@@ -8,6 +8,7 @@ import { useNavigate, Link } from "react-router-dom";
 
 const Register = () => {
   const [err, setErr] = useState(false);
+  const [errMsg, setErrMsg] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
@@ -54,34 +55,77 @@ const Register = () => {
         });
       });
     } catch (err) {
+      if (err.code === "auth/invalid-email") setErrMsg("Invalid Email");
+      if (err.code === "auth/email-already-in-use")
+        setErrMsg("Account Already Exist");
+      if (err.code === "auth/weak-password")
+        setErrMsg("Enter Password min 6 Character");
       setErr(true);
       setLoading(false);
     }
   };
 
   return (
-    <div className="formContainer">
-      <div className="formWrapper">
-        <span className="logo">Lama Chat</span>
-        <span className="title">Register</span>
-        <form onSubmit={handleSubmit}>
-          <input required type="text" placeholder="display name" />
-          <input required type="email" placeholder="email" />
-          <input required type="password" placeholder="password" />
-          <input required style={{ display: "none" }} type="file" id="file" />
-          <label htmlFor="file">
-            <img src={Add} alt="" />
-            <span>Add an avatar</span>
-          </label>
-          <button disabled={loading}>Sign up</button>
-          {loading && "Uploading and compressing the image please wait..."}
-          {err && <span>Something went wrong</span>}
-        </form>
-        <p>
-          You do have an account? <Link to="/register">Login</Link>
-        </p>
+    <>
+      <div className="wrapper">
+        <section class="form signup">
+          <header>MoMo Chat's</header>
+          <form onSubmit={handleSubmit}>
+            {err && <div className="error-text">{errMsg}</div>}
+
+            <div class="field input">
+              <label>Display Name</label>
+              <input
+                type="text"
+                name="displayname"
+                placeholder="Display name"
+                required
+              />
+            </div>
+
+            <div class="field input">
+              <label>Email Address</label>
+              <input
+                type="text"
+                name="email"
+                placeholder="Enter your email"
+                required
+              />
+            </div>
+            <div class="field input">
+              <label>Password</label>
+              <input
+                type="password"
+                name="password"
+                placeholder="Enter new password"
+                required
+              />
+              <i class="fas fa-eye"></i>
+            </div>
+            <div class="field image">
+              <label>Select Avatar</label>
+              <input
+                type="file"
+                name="image"
+                accept="image/x-png,image/gif,image/jpeg,image/jpg"
+                required
+              />
+            </div>
+            <div class="field button">
+              <input
+                type="submit"
+                name="submit"
+                value={loading ? "Loading please wait..." : "Continue to Chat"}
+                disabled={loading ? true : false}
+              />
+            </div>
+          </form>
+          <div class="link">
+            Already signed up? <Link to="/login">Login now</Link>
+          </div>
+        </section>
       </div>
-    </div>
+    </>
   );
 };
 
